@@ -53,11 +53,13 @@ let run_direct_ (self : state) (task : task) : unit =
   | Bb_queue.Closed -> raise Shutdown
 
 let rec run_async_ (self : state) (task : task) : unit =
+  Printf.printf "\nPool: run_async_:";
   let task' () =
     (* run [f()] and handle [suspend] in it *)
     Suspend_.with_suspend task ~run:(fun ~with_handler task ->
         if with_handler then
-          run_async_ self task
+          (Printf.printf "\nPool: run_async_: task'";
+          run_async_ self task)
         else
           run_direct_ self task)
   in

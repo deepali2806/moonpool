@@ -5,7 +5,7 @@
  (preprocess
   (action
    (run %{project_root}/src/cpp/cpp.exe %{input-file})))
- (libraries threads either
+ (libraries threads either unified_interface
             (select dla_.ml from
              (domain-local-await -> dla_.real.ml)
              ( -> dla_.dummy.ml))))

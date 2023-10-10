@@ -1,3 +1,4 @@
+open Unified_interface
 type suspension = (unit, exn * Printexc.raw_backtrace) result -> unit
 type task = unit -> unit
 
@@ -22,11 +23,23 @@ let with_suspend ~(run : with_handler:bool -> task -> unit) (f : unit -> unit) :
     | Suspend h ->
       Some
         (fun k ->
+          Printf.printf "\nSuspend Effect (existing): Handler";
           let k' : suspension = function
             | Ok () -> E.continue k ()
             | Error (exn, bt) -> E.discontinue_with_backtrace k exn bt
           in
           h.handle ~run k')
+    | Sched.Suspend f -> Some
+    (fun k ->
+      let resumer v = 
+        (match v with
+        | Ok v -> E.continue k v
+        | Error exn -> E.discontinue k exn);true
+      in
+      match f resumer with
+      | Some v -> E.continue k v
+      | None -> run ~with_handler:false (fun () -> Printf.printf "\nAdding dummy task"; ())
+    )
     | _ -> None
   in
 
