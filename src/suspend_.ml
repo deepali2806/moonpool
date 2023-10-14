@@ -23,7 +23,6 @@ let with_suspend ~(run : with_handler:bool -> task -> unit) (f : unit -> unit) :
     | Suspend h ->
       Some
         (fun k ->
-          Printf.printf "\nSuspend Effect (existing): Handler";
           let k' : suspension = function
             | Ok () -> E.continue k ()
             | Error (exn, bt) -> E.discontinue_with_backtrace k exn bt
@@ -38,7 +37,7 @@ let with_suspend ~(run : with_handler:bool -> task -> unit) (f : unit -> unit) :
       in
       match f resumer with
       | Some v -> E.continue k v
-      | None -> run ~with_handler:false (fun () -> Printf.printf "\nAdding dummy task"; ())
+      | None -> run ~with_handler:false (fun () -> ())
     )
     | _ -> None
   in

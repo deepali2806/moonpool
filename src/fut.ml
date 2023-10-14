@@ -382,7 +382,6 @@ let await (fut : 'a t) : 'a =
           (fun ~run k ->
             on_result fut (function
               | Ok _ ->
-                Printf.printf "\nCalling from Future: Await function";
                 (* run without handler, we're already in a deep effect *)
                 run ~with_handler:false (fun () -> k (Ok ()))
               | Error (exn, bt) ->
